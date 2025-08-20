@@ -1,0 +1,94 @@
+{
+  "mcpServers": {
+    "adios": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "adios"],
+      "env": {},
+      "description": "ADIOS2 framework for scientific simulation data access"
+    },
+    "arxiv": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "arxiv"],
+      "env": {},
+      "description": "ArXiv paper search and retrieval for research"
+    },
+    "compression": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "compression"],
+      "env": {},
+      "description": "Data compression and decompression utilities"
+    },
+    "darshan": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "darshan"],
+      "env": {},
+      "description": "HPC application I/O performance analysis"
+    },
+    "hdf5": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "hdf5"],
+      "env": {},
+      "description": "HDF5 hierarchical data format operations"
+    },
+    "node_hardware": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "node-hardware"],
+      "env": {},
+      "description": "System hardware information and monitoring"
+    },
+    "pandas": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "pandas"],
+      "env": {},
+      "description": "Pandas data analysis and manipulation"
+    },
+    "parallel_sort": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "parallel-sort"],
+      "env": {},
+      "description": "Parallel sorting algorithms for large datasets"
+    },
+    "parquet": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "parquet"],
+      "env": {},
+      "description": "Apache Parquet columnar storage format operations"
+    },
+    "plot": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "plot"],
+      "env": {},
+      "description": "Scientific plotting and visualization"
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {},
+      "description": "Documentation retrieval for any library"
+    },
+    "zen_mcp": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/BeehiveInnovations/zen-mcp-server.git", "zen-mcp-server"],
+      "env": {
+        "CUSTOM_API_URL": "${LMSTUDIO_API_URL:-http://192.168.86.20:1234/v1}",
+        "CUSTOM_API_KEY": "${LMSTUDIO_API_KEY:-lm-studio}",
+        "CUSTOM_MODEL_NAME": "${LMSTUDIO_MODEL:-qwen3-4b-instruct-2507}",
+        "CUSTOM_MODEL_ENDPOINT": "${LMSTUDIO_API_URL:-http://192.168.86.20:1234/v1}",
+        "CUSTOM_MODEL": "${LMSTUDIO_MODEL:-qwen3-4b-instruct-2507}",
+        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "CUSTOM_CONNECT_TIMEOUT": "30",
+        "CUSTOM_READ_TIMEOUT": "900"
+      },
+      "description": "Multi-model AI orchestration with local/cloud providers"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "env": {
+        "ALLOWED_DIRECTORIES": "${DATA_INPUT_DIR:-./data/input},${DATA_OUTPUT_DIR:-./data/output}"
+      },
+      "description": "Enhanced filesystem operations for data management"
+    }
+  }
+}
