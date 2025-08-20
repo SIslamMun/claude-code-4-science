@@ -7,7 +7,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-purple.svg)](https://claude.ai/code)
 [![IOWarp](https://img.shields.io/badge/Powered%20by-IOWarp.ai-orange.svg)](https://iowarp.ai)
 
-**Transform Claude Code into a Scientific Computing Orchestrator**
+**Enhance Claude Code with Scientific Computing Superpowers**
 
 [Quick Start](#-quick-start) • [Features](#-features) • [Architecture](#-architecture) • [Documentation](#-documentation) • [Contributing](#-contributing)
 
@@ -17,18 +17,33 @@
 
 ## 🌟 What is Warpio?
 
-Warpio is a powerful transformation layer that enhances Claude Code with scientific computing superpowers. It orchestrates an "army" of specialized AI experts, scientific tools, and HPC capabilities to tackle complex computational challenges with minimal user intervention.
+Warpio is a powerful enhancement layer that adds scientific computing superpowers to Claude Code. You get the same Claude Code you know and love, now with the ability to orchestrate specialized AI experts, scientific tools, and HPC capabilities to tackle complex computational challenges.
 
-### 🎯 Key Differentiators
+### 🎯 Enhancement Philosophy
 
-| Claude Code | Warpio |
-|------------|--------|
-| General software development | **Scientific computing focus** |
-| Single agent | **Multi-expert orchestration** |
+Warpio **enhances** Claude Code rather than replacing it. Think of it as Claude Code with scientific superpowers:
+
+| Claude Code | Claude Code + Warpio |
+|------------|---------------------|
+| General software development | **Enhanced with scientific computing** |
+| Single agent capabilities | **Multi-expert orchestration** |
 | Standard file operations | **HDF5, NetCDF, ADIOS, Zarr expertise** |
 | Basic Python/JavaScript | **MPI, OpenMP, CUDA optimization** |
 | Simple scripts | **SLURM job orchestration** |
 | Sequential processing | **Parallel expert execution** |
+
+### What Stays the Same
+- All your familiar Claude Code capabilities
+- Same interface and user experience  
+- All standard tools and features
+- Your existing workflows
+
+### What Gets Enhanced
+- **Scientific Domain Knowledge**: Deep expertise in HPC, data formats, research workflows
+- **Multi-Expert Orchestration**: Parallel AI agents working together on complex tasks
+- **Specialized Tools**: 14+ MCPs for scientific computing (HDF5, SLURM, MPI, etc.)
+- **Local AI Integration**: Privacy-preserving delegation to your local models
+- **Intelligent Task Detection**: Automatic activation of relevant expertise
 
 ## ⚡ Quick Start
 
@@ -61,7 +76,7 @@ claude
 
 ### 👥 Expert Personas
 
-Warpio orchestrates specialized AI experts that work together:
+Warpio enhances Claude Code with specialized AI experts that work together:
 
 - **🗄️ Data Expert**: HDF5, NetCDF, Zarr optimization, parallel I/O
 - **🖥️ HPC Expert**: MPI programming, SLURM scripts, performance tuning
