@@ -168,7 +168,6 @@ claude-code-4-science/
 │   ├── mcp-configs/           # MCP configurations
 │   └── scripts/               # Utility scripts
 ├── install-warpio.sh          # Main installer
-├── TEST-WARPIO.md            # Comprehensive test suite
 └── README.md                 # This file
 ```
 
@@ -198,7 +197,7 @@ The installer supports two modes:
 
 ```bash
 cd /your/project
-./validate-warpio.sh
+.claude/scripts/validate-warpio.sh
 ```
 
 ### Test Commands
@@ -249,7 +248,6 @@ WARPIO_DOMAIN=iowarp.ai
 
 ### Guides
 - [Quick Start Guide](WARPIO-QUICKSTART.md)
-- [Testing Guide](TEST-WARPIO.md)
 - [MCP Documentation](https://iowarp.github.io/iowarp-mcps)
 
 ### Examples
@@ -295,7 +293,6 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 | Issue | Solution |
 |-------|----------|
 | Claude CLI not found | Install with `npm install -g @anthropic-ai/claude-cli` |
-| MCPs not loading | Run `.claude/scripts/install-mcps.sh` |
 | Local AI not detected | Check LM Studio/Ollama is running |
 | Experts not activating | Verify keywords in query |
 
@@ -303,7 +300,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ```bash
 # Check installation
-./validate-warpio.sh
+.claude/scripts/validate-warpio.sh
 
 # View configuration
 cat .env
