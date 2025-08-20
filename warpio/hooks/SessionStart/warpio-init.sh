@@ -68,6 +68,40 @@ else
     echo "   Install with: curl -LsSf https://astral.sh/uv/install.sh | sh"
 fi
 
+# MCP Health Check
+echo ""
+echo "🔍 Checking MCP availability..."
+
+# Check if iowarp-mcps package is installed
+if ! uv pip list 2>/dev/null | grep -q iowarp-mcps; then
+    echo "⚠️  iowarp-mcps package not installed"
+    echo "   Install with: uv pip install iowarp-mcps"
+    echo "   Some scientific computing features may be limited"
+else
+    echo "✅ iowarp-mcps package found"
+
+    # Check critical MCPs
+    critical_mcps=("hdf5" "slurm" "zen_mcp")
+    missing_mcps=()
+
+    for mcp in "${critical_mcps[@]}"; do
+        echo -n "   $mcp... "
+        if uvx iowarp-mcps "$mcp" --help &>/dev/null; then
+            echo "✅"
+        else
+            echo "❌"
+            missing_mcps+=("$mcp")
+        fi
+    done
+
+    if [ ${#missing_mcps[@]} -eq 0 ]; then
+        echo "✅ All critical MCPs available"
+    else
+        echo "⚠️  Some MCPs not working: ${missing_mcps[*]}"
+        echo "   Check iowarp-mcps installation"
+    fi
+fi
+
 # Create temporary workflow directory if it doesn't exist
 mkdir -p /tmp/warpio-workflows
 

@@ -58,12 +58,13 @@ curl -sSL https://raw.githubusercontent.com/akougkas/claude-code-4-science/main/
 ```
 
 The installer automatically:
-- ✅ Checks your environment
-- ✅ Installs missing dependencies (with permission)
-- ✅ Sets up Warpio enhancement layer
-- ✅ Configures local AI if available
-- ✅ Validates the installation
-- ✅ Provides clear next steps
+- ✅ Checks your environment and dependencies
+- ✅ Installs missing system dependencies (with permission)
+- ✅ Installs iowarp-mcps package for scientific computing
+- ✅ Sets up Warpio enhancement layer with all expert personas
+- ✅ Configures local AI integration (LM Studio/Ollama)
+- ✅ Validates MCP server availability
+- ✅ Provides clear next steps and troubleshooting guidance
 
 ### Start Using Warpio
 
@@ -100,9 +101,10 @@ Warpio enhances Claude Code with specialized AI experts that work together:
 - `parquet-mcp` - Columnar analytics
 
 **HPC Tools:**
-- `slurm-mcp` - Job scheduling
-- `mpi-mcp` - Message passing
-- `darshan-mcp` - I/O profiling
+- `slurm-mcp` - Job scheduling and resource management
+- `lmod-mcp` - Environment module management
+- `jarvis-mcp` - Data-centric pipeline lifecycle management
+- `darshan-mcp` - I/O profiling and performance analysis
 
 **Computing:**
 - `numpy-mcp` - Numerical operations
@@ -205,7 +207,8 @@ The installer supports two modes:
 
 ```bash
 cd /your/project
-.claude/scripts/validate-warpio.sh
+./validate-warpio.sh                    # Basic installation check
+.claude/validate-mcp-setup.sh          # Scientific MCP validation
 ```
 
 ### Test Commands
@@ -222,6 +225,15 @@ You: Analyze my simulation data and create publication figures
 
 # Local AI delegation
 You: Use zen to analyze this code
+
+# MCP health check
+You: /check-mcps
+
+# HPC job management
+You: Submit this job to SLURM
+
+# Pipeline orchestration
+You: Create a workflow for my data processing pipeline
 ```
 
 ## 🔧 Configuration
@@ -308,15 +320,19 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ```bash
 # Check installation
-.claude/scripts/validate-warpio.sh
+./validate-warpio.sh                    # Basic validation
+.claude/validate-mcp-setup.sh          # MCP dependency check
 
 # View configuration
 cat .env
-cat .claude/mcp-configs/warpio-mcps.json
+cat .mcp.json                          # MCP server configuration
+cat .claude/config/mcp-expert-map.json # Expert-MCP mapping
 
 # Test specific expert
 claude
 > I need help with HDF5 files  # Should activate data-expert
+> /check-mcps              # Check all MCP status
+> Submit job to SLURM       # Should activate hpc-expert
 ```
 
 ## 📄 License

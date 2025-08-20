@@ -1,4 +1,4 @@
-ai-docs/
+.ai-docs/
 .claude
 install-local.sh
 warpio-tests/

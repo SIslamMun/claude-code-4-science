@@ -64,7 +64,7 @@ run_preinstall_if_needed() {
         echo
         
         # Download and run pre-install script
-        local preinstall_url="https://raw.githubusercontent.com/$GITHUB_REPO/$BRANCH/pre-install.sh"
+        local preinstall_url="https://raw.githubusercontent.com/$GITHUB_REPO/$BRANCH/warpio/scripts/pre-install.sh"
         log_info "Downloading pre-installation script..."
         
         if curl -LsSf "$preinstall_url" | bash; then
@@ -114,6 +114,15 @@ check_dependencies() {
         echo "   Install with: curl -LsSf https://astral.sh/uv/install.sh | sh"
     else
         log_success "UV detected"
+
+        # Check for iowarp-mcps package if UV is available
+        if ! uv pip list 2>/dev/null | grep -q iowarp-mcps; then
+            log_warning "iowarp-mcps package not found (needed for scientific MCPs)"
+            echo "   Install with: uv pip install iowarp-mcps"
+            echo "   Or continue and install later"
+        else
+            log_success "iowarp-mcps package detected"
+        fi
     fi
     
     # Optional: npx for JavaScript MCPs
@@ -376,17 +385,36 @@ validate_installation() {
                 else
                     log_warning "context7 MCP not found"
                 fi
-                
+
                 if jq -e '.mcpServers.zen_mcp' "$TARGET_DIR/.mcp.json" &>/dev/null; then
                     log_success "zen_mcp configured"
                 else
                     log_warning "zen_mcp not found"
                 fi
-                
+
                 if jq -e '.mcpServers.filesystem' "$TARGET_DIR/.mcp.json" &>/dev/null; then
                     log_success "filesystem MCP configured"
                 else
                     log_warning "filesystem MCP not found"
+                fi
+
+                # Check for new critical scientific MCPs
+                if jq -e '.mcpServers.hdf5' "$TARGET_DIR/.mcp.json" &>/dev/null; then
+                    log_success "HDF5 MCP configured"
+                else
+                    log_warning "HDF5 MCP not found (scientific data I/O)"
+                fi
+
+                if jq -e '.mcpServers.slurm' "$TARGET_DIR/.mcp.json" &>/dev/null; then
+                    log_success "SLURM MCP configured"
+                else
+                    log_warning "SLURM MCP not found (HPC job management)"
+                fi
+
+                if jq -e '.mcpServers.jarvis' "$TARGET_DIR/.mcp.json" &>/dev/null; then
+                    log_success "Jarvis MCP configured"
+                else
+                    log_warning "Jarvis MCP not found (pipeline management)"
                 fi
             else
                 log_error "Invalid MCP configuration"
@@ -420,14 +448,15 @@ if command -v jq &>/dev/null && [ -f ".mcp.json" ]; then
     # Check for critical MCPs
     echo "Critical MCP Status:"
     jq -e '.mcpServers.context7' .mcp.json &>/dev/null && echo "✓ context7 configured" || echo "✗ context7 missing"
-    jq -e '.mcpServers.zen' .mcp.json &>/dev/null && echo "✓ zen configured" || echo "✗ zen missing"
+    jq -e '.mcpServers.zen_mcp' .mcp.json &>/dev/null && echo "✓ zen_mcp configured" || echo "✗ zen_mcp missing"
     echo
 fi
 
 echo "To test with Claude Code:"
 echo "  1. Run: claude"
 echo "  2. Type: /mcp"
-echo "  3. Ask: who are you?"
+echo "  3. Type: /check-mcps"
+echo "  4. Ask: who are you?"
 EOF
     chmod +x "$TARGET_DIR/validate-warpio.sh"
     
@@ -478,7 +507,15 @@ main() {
     # Configure MCPs
     configure_mcps
     echo
-    
+
+    # Install MCP validation script
+    if [ -f "$WARPIO_SOURCE/scripts/validate-mcp-setup.sh" ]; then
+        log_info "Installing MCP validation script..."
+        cp "$WARPIO_SOURCE/scripts/validate-mcp-setup.sh" "$TARGET_DIR/.claude/"
+        chmod +x "$TARGET_DIR/.claude/validate-mcp-setup.sh"
+        log_success "MCP validation script installed"
+    fi
+
     # Validate installation
     if validate_installation; then
         echo
@@ -490,10 +527,12 @@ main() {
         echo
         echo "Next steps:"
         echo -e "  1. ${CYAN}cd $TARGET_DIR${NC}"
-        echo -e "  2. ${CYAN}./validate-warpio.sh${NC}  # Run validation"
-        echo -e "  3. ${CYAN}claude${NC}               # Start Claude Code"
-        echo -e "  4. Type: ${YELLOW}/mcp${NC}          # Check MCP servers"
-        echo -e "  5. Ask: ${YELLOW}who are you?${NC}   # Verify Warpio personality"
+        echo -e "  2. ${CYAN}./validate-warpio.sh${NC}  # Run basic validation"
+        echo -e "  3. ${CYAN}.claude/validate-mcp-setup.sh${NC}  # Check scientific MCPs"
+        echo -e "  4. ${CYAN}claude${NC}               # Start Claude Code"
+        echo -e "  5. Type: ${YELLOW}/mcp${NC}          # Check MCP servers"
+        echo -e "  6. Type: ${YELLOW}/check-mcps${NC}   # Detailed MCP status"
+        echo -e "  7. Ask: ${YELLOW}who are you?${NC}   # Verify Warpio personality"
         echo
         echo "For local AI integration, configure your .env file:"
         echo -e "  ${CYAN}nano .env${NC}"

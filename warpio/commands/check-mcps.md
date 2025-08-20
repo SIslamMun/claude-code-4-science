@@ -28,6 +28,8 @@ I'll verify which MCPs are available and properly configured for Warpio's expert
 **HPC Expert MCPs:**
 - `mcp__darshan__*` - I/O profiling
 - `mcp__node_hardware__*` - Hardware monitoring
+- `mcp__slurm__*` - Job scheduling
+- `mcp__lmod__*` - Environment modules
 - `mcp__zen_mcp__*` - Cluster tasks
 
 **Research Expert MCPs:**
@@ -37,6 +39,8 @@ I'll verify which MCPs are available and properly configured for Warpio's expert
 
 **Workflow Expert MCPs:**
 - `mcp__filesystem__*` - File operations
+- `mcp__jarvis__*` - Pipeline lifecycle
+- `mcp__slurm__*` - HPC job management
 - `mcp__zen_mcp__*` - Workflow coordination
 
 ### Status Report

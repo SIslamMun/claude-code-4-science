@@ -1,0 +1,32 @@
+{
+  "mcp_to_expert": {
+    "hdf5": "data-expert",
+    "adios": "data-expert",
+    "parquet": "data-expert",
+    "compression": "data-expert",
+    "pandas": ["data-expert", "analysis-expert"],
+    "filesystem": ["data-expert", "workflow-expert"],
+    "plot": "analysis-expert",
+    "zen_mcp": ["analysis-expert", "hpc-expert", "research-expert", "workflow-expert"],
+    "darshan": "hpc-expert",
+    "node_hardware": "hpc-expert",
+    "slurm": ["hpc-expert", "workflow-expert"],
+    "lmod": "hpc-expert",
+    "arxiv": "research-expert",
+    "context7": "research-expert",
+    "jarvis": "workflow-expert"
+  },
+  "expert_primary_mcps": {
+    "data-expert": ["hdf5", "adios", "parquet", "compression"],
+    "analysis-expert": ["plot"],
+    "hpc-expert": ["darshan", "node_hardware", "slurm", "lmod"],
+    "research-expert": ["arxiv", "context7"],
+    "workflow-expert": ["jarvis", "slurm"]
+  },
+  "shared_mcps": {
+    "pandas": "Dataframes and analysis (shared between data and analysis experts)",
+    "filesystem": "File operations (shared between data and workflow experts)",
+    "zen_mcp": "Local AI orchestration (shared across all experts)",
+    "slurm": "HPC job management (shared between HPC and workflow experts)"
+  }
+}

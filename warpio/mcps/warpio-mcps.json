@@ -89,6 +89,24 @@
         "ALLOWED_DIRECTORIES": "${DATA_INPUT_DIR:-./data/input},${DATA_OUTPUT_DIR:-./data/output}"
       },
       "description": "Enhanced filesystem operations for data management"
+    },
+    "slurm": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "slurm"],
+      "env": {},
+      "description": "HPC job submission, monitoring, and resource management"
+    },
+    "lmod": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "lmod"],
+      "env": {},
+      "description": "Environment module management for scientific computing"
+    },
+    "jarvis": {
+      "command": "uvx",
+      "args": ["iowarp-mcps", "jarvis"],
+      "env": {},
+      "description": "Data-centric pipeline lifecycle management"
     }
   }
 }
