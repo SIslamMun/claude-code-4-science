@@ -47,19 +47,23 @@ Warpio **enhances** Claude Code rather than replacing it. Think of it as Claude 
 
 ## ⚡ Quick Start
 
-### One-Click Installation
+### One-Command Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/iowarp/claude-code-4-science
-cd claude-code-4-science
+# Install Warpio with a single command
+curl -sSL https://raw.githubusercontent.com/akougkas/claude-code-4-science/main/install.sh | bash
 
-# Install to your project (one-click mode)
-./install-warpio.sh /path/to/your/project
-
-# Or use interactive mode for customization
-./install-warpio.sh --interactive /path/to/your/project
+# Or install to a specific directory
+curl -sSL https://raw.githubusercontent.com/akougkas/claude-code-4-science/main/install.sh | bash -s -- --dir myproject
 ```
+
+The installer automatically:
+- ✅ Checks your environment
+- ✅ Installs missing dependencies (with permission)
+- ✅ Sets up Warpio enhancement layer
+- ✅ Configures local AI if available
+- ✅ Validates the installation
+- ✅ Provides clear next steps
 
 ### Start Using Warpio
 
@@ -157,17 +161,21 @@ Warpio enhances Claude Code with specialized AI experts that work together:
 
 ```
 claude-code-4-science/
-├── .warpio/                    # Core Warpio configuration
-│   ├── WARPIO.md              # Main identity prompt
-│   ├── agents/                # Expert personas
+├── install.sh                 # One-command installer (curl entry point)
+├── .warpio/                   # Core Warpio configuration
+│   ├── WARPIO.md             # Main identity prompt
+│   ├── agents/               # Expert personas
 │   │   ├── data-expert.md
 │   │   ├── hpc-expert.md
 │   │   └── ...
-│   ├── commands/              # Custom slash commands
-│   ├── hooks/                 # Event hooks
-│   ├── mcp-configs/           # MCP configurations
-│   └── scripts/               # Utility scripts
-├── install-warpio.sh          # Main installer
+│   ├── commands/             # Custom slash commands
+│   ├── hooks/                # Event hooks
+│   ├── mcp-configs/          # MCP configurations
+│   └── scripts/              # All installation and utility scripts
+│       ├── install-warpio.sh
+│       ├── uninstall-warpio.sh
+│       ├── upgrade-warpio.sh
+│       └── ...
 └── README.md                 # This file
 ```
 

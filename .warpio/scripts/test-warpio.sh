@@ -278,9 +278,11 @@ EOF
 # ========================================================================
 
 main() {
-    print_warpio_banner
-    echo -e "${BOLD}Warpio Comprehensive Test Suite${NC}"
-    echo ""
+    if [ "$QUIET_MODE" = false ]; then
+        print_warpio_banner
+        echo -e "${BOLD}Warpio Comprehensive Test Suite${NC}"
+        echo ""
+    fi
     
     # Run all tests
     test_core_files
@@ -297,27 +299,35 @@ main() {
     generate_report
     
     # Print summary
-    print_section_header "Test Summary"
+    if [ "$QUIET_MODE" = false ]; then
+        print_section_header "Test Summary"
+        
+        echo "Total Tests: $((PASSED_TESTS + FAILED_TESTS))"
+        echo -e "${GREEN}Passed: $PASSED_TESTS${NC}"
+        echo -e "${RED}Failed: $FAILED_TESTS${NC}"
+        
+        echo ""
+        if [ $FAILED_TESTS -eq 0 ]; then
+            echo -e "${GREEN}╔══════════════════════════════════════════════════════════════╗${NC}"
+            echo -e "${GREEN}║           ✅ All tests passed! Warpio is ready!             ║${NC}"
+            echo -e "${GREEN}╚══════════════════════════════════════════════════════════════╝${NC}"
+        else
+            echo -e "${YELLOW}╔══════════════════════════════════════════════════════════════╗${NC}"
+            echo -e "${YELLOW}║         ⚠️  Some tests failed. Review report above.          ║${NC}"
+            echo -e "${YELLOW}╚══════════════════════════════════════════════════════════════╝${NC}"
+        fi
+    fi
     
-    echo "Total Tests: $((PASSED_TESTS + FAILED_TESTS))"
-    echo -e "${GREEN}Passed: $PASSED_TESTS${NC}"
-    echo -e "${RED}Failed: $FAILED_TESTS${NC}"
-    
-    echo ""
+    # Always exit with appropriate code
     if [ $FAILED_TESTS -eq 0 ]; then
-        echo -e "${GREEN}╔══════════════════════════════════════════════════════════════╗${NC}"
-        echo -e "${GREEN}║           ✅ All tests passed! Warpio is ready!             ║${NC}"
-        echo -e "${GREEN}╚══════════════════════════════════════════════════════════════╝${NC}"
         exit 0
     else
-        echo -e "${YELLOW}╔══════════════════════════════════════════════════════════════╗${NC}"
-        echo -e "${YELLOW}║         ⚠️  Some tests failed. Review report above.          ║${NC}"
-        echo -e "${YELLOW}╚══════════════════════════════════════════════════════════════╝${NC}"
         exit 1
     fi
 }
 
 # Parse arguments
+QUIET_MODE=false
 case "${1:-}" in
     --help|-h)
         echo "Usage: $0 [OPTIONS]"
@@ -326,11 +336,15 @@ case "${1:-}" in
         echo ""
         echo "Options:"
         echo "  --verbose, -v    Show detailed test output"
+        echo "  --quiet, -q      Minimal output (exit code only)"
         echo "  --help, -h       Show this help message"
         exit 0
         ;;
     --verbose|-v)
         set -x
+        ;;
+    --quiet|-q)
+        QUIET_MODE=true
         ;;
 esac
 

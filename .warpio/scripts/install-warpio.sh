@@ -1,7 +1,7 @@
 #!/bin/bash
 # ========================================================================
-# WARPIO INSTALLER v2.0 - SIMPLIFIED & CLEAN
-# Core installation without redundancies
+# WARPIO INSTALLER v2.0 - UNIFIED INSTALLATION
+# Complete installation with embedded pre/post checks
 # ========================================================================
 
 set -e
@@ -32,8 +32,79 @@ fi
 # Configuration
 VERSION="2.0.0"
 TARGET_DIR=""
-RUN_PRE_INSTALL=false
+RUN_PRE_CHECKS=true
 RUN_POST_INSTALL=true
+AUTO_INSTALL_DEPS=false
+
+# ========================================================================
+# EMBEDDED PRE-CHECKS
+# ========================================================================
+
+run_pre_checks() {
+    log_info "Running pre-installation checks..."
+    
+    # Check OS
+    local os=""
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        os="linux"
+        log_success "Linux detected"
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        os="macos"
+        log_success "macOS detected"
+    else
+        log_warning "Unknown OS: $OSTYPE"
+    fi
+    
+    # Check critical dependencies
+    local missing_deps=()
+    
+    # UV package manager
+    if ! command -v uv &>/dev/null; then
+        log_warning "UV not detected"
+        if [ "$AUTO_INSTALL_DEPS" = true ]; then
+            log_info "Installing UV..."
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+            export PATH="$HOME/.cargo/bin:$PATH"
+        else
+            missing_deps+=("uv")
+        fi
+    else
+        log_success "UV detected"
+    fi
+    
+    # Claude CLI
+    if ! command -v claude &>/dev/null; then
+        log_warning "Claude CLI not detected"
+        missing_deps+=("claude-cli")
+    else
+        log_success "Claude CLI detected"
+    fi
+    
+    # Python
+    if ! command -v python3 &>/dev/null; then
+        log_warning "Python 3 not detected (optional)"
+    else
+        log_success "Python 3 detected"
+    fi
+    
+    # Report
+    if [ ${#missing_deps[@]} -gt 0 ]; then
+        log_warning "Missing: ${missing_deps[*]}"
+        echo "   Install with:"
+        [[ " ${missing_deps[@]} " =~ " uv " ]] && echo "   - UV: curl -LsSf https://astral.sh/uv/install.sh | sh"
+        [[ " ${missing_deps[@]} " =~ " claude-cli " ]] && echo "   - Claude CLI: npm install -g @anthropic-ai/claude-cli"
+    fi
+    
+    # Detect local AI
+    log_info "Detecting local AI services..."
+    if timeout 1 curl -s http://localhost:1234/v1/models &>/dev/null; then
+        log_success "LM Studio detected"
+    elif command -v ollama &>/dev/null && ollama list &>/dev/null; then
+        log_success "Ollama detected"
+    else
+        log_info "No local AI detected (optional)"
+    fi
+}
 
 # ========================================================================
 # CORE FUNCTIONS
@@ -42,18 +113,19 @@ RUN_POST_INSTALL=true
 show_usage() {
     echo "Usage: $0 [OPTIONS] TARGET_DIRECTORY"
     echo ""
-    echo "Simplified Warpio installer that focuses on core installation."
+    echo "Complete Warpio installer with embedded checks and validation."
     echo ""
     echo "Options:"
-    echo "  --pre-install     Run pre-installation checks first"
+    echo "  --auto            Auto-install missing dependencies"
+    echo "  --skip-checks     Skip pre-installation checks"
     echo "  --skip-post       Skip post-installation configuration"
     echo "  --help, -h        Show this help message"
     echo "  --version, -v     Show version information"
     echo ""
     echo "Examples:"
-    echo "  $0 myproject                    # Basic installation"
-    echo "  $0 --pre-install myproject       # With environment check"
-    echo "  $0 --skip-post /path/to/project  # Install only, no config"
+    echo "  $0 myproject                    # Complete installation"
+    echo "  $0 --auto myproject              # Auto-install dependencies"
+    echo "  $0 --skip-checks myproject       # Fast installation"
     echo ""
 }
 
@@ -227,8 +299,12 @@ EOF
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        --pre-install)
-            RUN_PRE_INSTALL=true
+        --auto)
+            AUTO_INSTALL_DEPS=true
+            shift
+            ;;
+        --skip-checks)
+            RUN_PRE_CHECKS=false
             shift
             ;;
         --skip-post)
@@ -277,15 +353,11 @@ echo -e "${CYAN}║                   Powered by IOWarp.ai                      
 echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-# Run pre-installation if requested
-if [ "$RUN_PRE_INSTALL" = true ]; then
-    if [ -x "$WARPIO_SOURCE/scripts/pre-install.sh" ]; then
-        log_info "Running pre-installation checks..."
-        "$WARPIO_SOURCE/scripts/pre-install.sh"
-        echo ""
-    else
-        log_warning "Pre-install script not found"
-    fi
+# Run embedded pre-checks
+if [ "$RUN_PRE_CHECKS" = true ]; then
+    echo ""
+    run_pre_checks
+    echo ""
 fi
 
 # Main installation
@@ -302,15 +374,21 @@ create_quickstart
 echo ""
 log_success "Core installation complete!"
 
-# Run post-installation if not skipped
+# Run post-installation validation
 if [ "$RUN_POST_INSTALL" = true ]; then
     echo ""
+    log_info "Running post-installation configuration..."
+    
+    # Configure zen-mcp
     if [ -x "$TARGET_DIR/.claude/scripts/post-install.sh" ]; then
-        log_info "Running post-installation configuration..."
         cd "$TARGET_DIR"
         ./.claude/scripts/post-install.sh
-    else
-        log_warning "Post-install script not found, skipping configuration"
+    fi
+    
+    # Run validation tests
+    if [ -x "$TARGET_DIR/.claude/scripts/test-warpio.sh" ]; then
+        log_info "Running validation tests..."
+        "$TARGET_DIR/.claude/scripts/test-warpio.sh" --quiet || log_warning "Some tests failed (non-critical)"
     fi
 fi
 
