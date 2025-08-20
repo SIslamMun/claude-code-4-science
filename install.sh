@@ -289,10 +289,11 @@ run_installer() {
         
         # The installer handles everything internally
         if [ "$VERBOSE" = true ]; then
-            ./.warpio/scripts/install-warpio.sh "$target_dir"
+            bash ./.warpio/scripts/install-warpio.sh "$target_dir"
         else
-            ./.warpio/scripts/install-warpio.sh "$target_dir" &>/dev/null &
+            bash ./.warpio/scripts/install-warpio.sh "$target_dir" &>/dev/null &
             spinner $!
+        fi
         
         if [ -d "$target_dir/.claude" ]; then
             log_success "Warpio installed successfully"
@@ -451,6 +452,7 @@ main() {
                 exit 0
                 ;;
             *)
+                INSTALL_DIR="$1"
                 shift
                 ;;
         esac
@@ -511,7 +513,9 @@ main() {
     echo ""
     
     # Step 6: Cleanup
-    rm -rf "$REPO_DIR"
+    if [ "$REPO_DIR" != "$(pwd)" ]; then
+        rm -rf "$REPO_DIR"
+    fi
     
     # Step 7: Show next steps
     show_next_steps "$INSTALL_DIR"

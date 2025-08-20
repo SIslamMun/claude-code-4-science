@@ -8,7 +8,8 @@ set -e
 
 # Script location
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WARPIO_SOURCE="$SCRIPT_DIR/.warpio"
+# Go up from scripts/ to get to .warpio/
+WARPIO_SOURCE="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Colors
 RED='\033[0;31m'

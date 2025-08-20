@@ -8,7 +8,8 @@ set -e
 
 # Source utilities
 INSTALLER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WARPIO_SOURCE="$INSTALLER_DIR/.warpio"
+# Go up two levels from scripts/ to get to .warpio/
+WARPIO_SOURCE="$(cd "$INSTALLER_DIR/.." && pwd)"
 
 # Try to source utilities if available
 if [ -f "$WARPIO_SOURCE/scripts/utils/warpio-utils.sh" ]; then
