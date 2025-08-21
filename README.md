@@ -39,11 +39,17 @@ Warpio **enhances** Claude Code rather than replacing it. Think of it as Claude 
 - Your existing workflows
 
 ### What Gets Enhanced
-- **Scientific Domain Knowledge**: Deep expertise in HPC, data formats, research workflows
-- **Multi-Expert Orchestration**: Parallel AI agents working together on complex tasks
-- **Specialized Tools**: 14+ MCPs for scientific computing (HDF5, SLURM, MPI, etc.)
-- **Local AI Integration**: Privacy-preserving delegation to your local models
-- **Intelligent Task Detection**: Automatic activation of relevant expertise
+
+Warpio transforms Claude Code into a powerful scientific computing platform by adding:
+
+- **🧠 Scientific Intelligence**: Deep expertise in HPC, data formats, and research workflows that goes beyond general programming knowledge
+- **👥 Multi-Expert Orchestration**: 5 specialized AI agents that work independently or collaborate on complex multi-domain tasks
+- **🔧 Specialized Scientific Tools**: 14+ purpose-built MCP tools for data formats (HDF5, ADIOS, Parquet), HPC (SLURM, Darshan), and analysis
+- **🏠 Local AI Integration**: Privacy-preserving delegation to your local models (LM Studio, Ollama) for sensitive data processing
+- **🎯 Intelligent Task Detection**: Automatic activation of relevant expertise based on your queries - no need to manually specify which expert to use
+- **📊 Advanced Workflows**: End-to-end scientific computing pipeline support with automated orchestration
+- **⚡ Performance Optimization**: Built-in knowledge of HPC best practices, data formats, and computational patterns
+- **🔒 Research Privacy**: Secure handling of sensitive research data with local AI processing when needed
 
 ## ⚡ Quick Start
 
@@ -68,14 +74,36 @@ The installer automatically:
 
 ### Start Using Warpio
 
-```bash
-# Option 1: Use the warpio alias
-warpio
+After installation, Warpio is ready to use! Here are your options:
 
-# Option 2: Navigate and launch
+#### Option 1: Direct Launch (Recommended)
+```bash
+# Navigate to your project directory and start Claude Code
 cd /path/to/your/project
 claude
 ```
+
+Warpio will automatically activate when you start Claude Code in a directory with Warpio installed.
+
+
+#### First Steps After Launching
+
+1. **Verify Installation**: Type `Who are you?` to confirm Warpio is active
+2. **Explore Experts**: Type `/expert-list` to see available AI experts
+3. **Test Configuration**: Type `/config-validate` to check your setup
+4. **Try Scientific Tasks**: Ask questions like:
+   - "How do I optimize my HDF5 file?"
+   - "Generate a SLURM script for my MPI application"
+   - "Help me analyze this climate data"
+
+#### Understanding the Interface
+
+- **Expert Activation**: Warpio automatically detects when you need scientific expertise
+- **Command System**: Use `/help` to see all available slash commands
+- **Status Line**: Check the bottom of your screen for Warpio status information
+- **Multi-Expert Tasks**: Complex tasks automatically engage multiple experts working together
+
+Warpio's intelligent routing will automatically activate the appropriate experts based on your requests!
 
 ## 🔬 Features
 
@@ -94,27 +122,30 @@ Warpio enhances Claude Code with specialized AI experts that work together:
 14+ specialized Model Context Protocol tools:
 
 **Data Formats:**
-- `hdf5-mcp` - Hierarchical data operations
-- `netcdf-mcp` - Climate data handling
-- `adios-mcp` - Streaming I/O for simulations
-- `zarr-mcp` - Cloud-optimized arrays
-- `parquet-mcp` - Columnar analytics
+- `hdf5` - Hierarchical data format operations and optimization
+- `adios` - ADIOS2 framework for scientific simulation data access
+- `parquet` - Apache Parquet columnar storage format operations
+- `compression` - Data compression and decompression utilities
 
 **HPC Tools:**
-- `slurm-mcp` - Job scheduling and resource management
-- `lmod-mcp` - Environment module management
-- `jarvis-mcp` - Data-centric pipeline lifecycle management
-- `darshan-mcp` - I/O profiling and performance analysis
+- `slurm` - HPC job scheduling and resource management
+- `lmod` - Environment module management for scientific computing
+- `jarvis` - Data-centric pipeline lifecycle management
+- `darshan` - HPC application I/O profiling and performance analysis
+- `node_hardware` - System hardware information and monitoring
 
-**Computing:**
-- `numpy-mcp` - Numerical operations
-- `pandas-mcp` - Data manipulation
-- `scipy-mcp` - Scientific algorithms
+**Computing & Analysis:**
+- `pandas` - Data manipulation and analysis
+- `parallel_sort` - Parallel sorting algorithms for large datasets
+- `plot` - Scientific plotting and visualization
+
+**AI & Research:**
+- `zen_mcp` - Multi-model AI orchestration with local/cloud providers
+- `arxiv` - ArXiv paper search and retrieval for research
+- `context7` - Documentation retrieval for any library
 
 **Utilities:**
-- `arxiv-mcp` - Paper retrieval
-- `git-mcp` - Version control
-- `filesystem-mcp` - Advanced file ops
+- `filesystem` - Enhanced filesystem operations for data management
 
 ### 🤖 AI Orchestration
 
@@ -164,20 +195,33 @@ Warpio enhances Claude Code with specialized AI experts that work together:
 ```
 claude-code-4-science/
 ├── install.sh                 # One-command installer (curl entry point)
-├── .warpio/                   # Core Warpio configuration
-│   ├── WARPIO.md             # Main identity prompt
-│   ├── agents/               # Expert personas
-│   │   ├── data-expert.md
-│   │   ├── hpc-expert.md
-│   │   └── ...
-│   ├── commands/             # Custom slash commands
-│   ├── hooks/                # Event hooks
-│   ├── mcp-configs/          # MCP configurations
-│   └── scripts/              # All installation and utility scripts
-│       ├── install-warpio.sh
-│       ├── uninstall-warpio.sh
-│       ├── upgrade-warpio.sh
-│       └── ...
+├── warpio/                    # Core Warpio implementation
+│   ├── WARPIO.md             # Main identity prompt and behavior
+│   ├── agents/               # Expert personas (5 total)
+│   │   ├── data-expert.md    # Scientific data formats & I/O
+│   │   ├── hpc-expert.md     # HPC, SLURM, MPI optimization
+│   │   ├── analysis-expert.md # Visualization & statistics
+│   │   ├── research-expert.md # Papers, citations, reproducibility
+│   │   └── workflow-expert.md # Pipeline orchestration
+│   ├── commands/             # 18+ slash commands
+│   │   ├── warpio-config-*   # Configuration management
+│   │   ├── warpio-expert-*   # Expert control commands
+│   │   ├── warpio-help-*     # Help and documentation
+│   │   └── warpio-workflow-* # Workflow management
+│   ├── hooks/                # Event-driven automation
+│   │   ├── SessionStart/     # Session initialization
+│   │   ├── SubagentStop/     # Expert completion logging
+│   │   ├── Stop/             # Session cleanup
+│   │   └── PreCompact/       # Workflow checkpointing
+│   ├── mcps/                # MCP server configurations
+│   │   └── warpio-mcps.json  # Complete MCP tool definitions
+│   ├── scripts/             # Installation and utility scripts
+│   │   ├── pre-install.sh    # System dependency setup
+│   │   └── validate-mcp-setup.sh # MCP validation
+│   ├── output-styles/       # Custom output formatting
+│   ├── statusline/          # Status line components
+│   ├── themes/              # Custom themes and styling
+│   └── settings.json        # Claude Code configuration
 └── README.md                 # This file
 ```
 
@@ -226,8 +270,26 @@ You: Analyze my simulation data and create publication figures
 # Local AI delegation
 You: Use zen to analyze this code
 
-# MCP health check
-You: /check-mcps
+# Expert management commands
+You: /expert-list     # List all available experts
+You: /expert-status   # Show current expert status
+You: /expert-delegate data-expert "Optimize my HDF5 file"
+
+# Configuration management
+You: /config-setup    # Setup Warpio configuration
+You: /config-validate # Validate current configuration
+You: /config-reset    # Reset to default configuration
+
+# Workflow management
+You: /workflow-create my-data-pipeline
+You: /workflow-status
+You: /workflow-edit my-data-pipeline
+
+# Help and documentation
+You: /help            # General help
+You: /help-experts    # Expert-specific help
+You: /help-config     # Configuration help
+You: /help-local      # Local AI setup help
 
 # HPC job management
 You: Submit this job to SLURM
@@ -251,7 +313,12 @@ ORCHESTRATION_MODE=parallel
 
 # Warpio Settings
 WARPIO_VERSION=1.0.0
-WARPIO_DOMAIN=iowarp.ai
+WARPIO_ENABLED=true
+WARPIO_SUBAGENT_MCP_ACCESS=true
+
+# Data directories
+DATA_INPUT_DIR=./data/input
+DATA_OUTPUT_DIR=./data/output
 ```
 
 ### Expert Activation Keywords
@@ -319,20 +386,28 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ### Debug Commands
 
 ```bash
-# Check installation
-./validate-warpio.sh                    # Basic validation
-.claude/validate-mcp-setup.sh          # MCP dependency check
+# Installation validation
+./validate-warpio.sh                    # Basic installation check
+.claude/validate-mcp-setup.sh          # Scientific MCP validation
 
-# View configuration
-cat .env
+# View configuration files
+cat .env                               # Environment variables
 cat .mcp.json                          # MCP server configuration
-cat .claude/config/mcp-expert-map.json # Expert-MCP mapping
+cat .claude/settings.json              # Claude Code settings
 
-# Test specific expert
+# Interactive testing
 claude
-> I need help with HDF5 files  # Should activate data-expert
-> /check-mcps              # Check all MCP status
-> Submit job to SLURM       # Should activate hpc-expert
+> Who are you?                        # Identity test
+> /expert-list                         # List available experts
+> /expert-status                       # Current expert status
+> /config-validate                     # Configuration validation
+> I need help with HDF5 files          # Should activate data-expert
+> Submit job to SLURM                  # Should activate hpc-expert
+> /help                                # Show all available commands
+
+# Log inspection
+tail -f .claude/hooks/logs/expert-activity.log
+tail -f .claude/hooks/logs/session-summary.log
 ```
 
 ## 📄 License
