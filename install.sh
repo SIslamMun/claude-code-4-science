@@ -209,10 +209,13 @@ install_warpio() {
     mkdir -p "$TARGET_DIR/.claude"
     mkdir -p "$TARGET_DIR/.claude/agents"
     mkdir -p "$TARGET_DIR/.claude/commands"
-    mkdir -p "$TARGET_DIR/.claude/hooks/SessionStart"
-    mkdir -p "$TARGET_DIR/.claude/hooks/PostToolUse"
+    # Create all hook directories
+    for hook_dir in SessionStart PostToolUse PreCompact Stop SubagentStop; do
+        mkdir -p "$TARGET_DIR/.claude/hooks/$hook_dir"
+    done
     mkdir -p "$TARGET_DIR/.claude/output-styles"
     mkdir -p "$TARGET_DIR/.claude/statusline"
+    mkdir -p "$TARGET_DIR/.claude/themes"
     
     # Install expert agents
     if [ -d "$WARPIO_SOURCE/agents" ]; then
@@ -250,6 +253,13 @@ install_warpio() {
         cp -r "$WARPIO_SOURCE/statusline/"* "$TARGET_DIR/.claude/statusline/" 2>/dev/null || true
         find "$TARGET_DIR/.claude/statusline" -type f -name "*.sh" -exec chmod +x {} \;
         log_success "Statusline installed"
+    fi
+
+    # Install themes
+    if [ -d "$WARPIO_SOURCE/themes" ]; then
+        log_info "Installing themes..."
+        cp -r "$WARPIO_SOURCE/themes/"* "$TARGET_DIR/.claude/themes/" 2>/dev/null || true
+        log_success "Themes installed"
     fi
     
     # Install Warpio personality
@@ -343,11 +353,24 @@ EOF
     if [ -f "$WARPIO_SOURCE/settings.json" ]; then
         cp "$WARPIO_SOURCE/settings.json" "$TARGET_DIR/.claude/settings.json"
         log_success "Settings configured with auto-approval for MCPs"
+
+        # Verify status line configuration
+        if command -v jq &>/dev/null; then
+            if jq -e '.statusLine' "$TARGET_DIR/.claude/settings.json" &>/dev/null; then
+                log_success "Status line configured"
+            else
+                log_warning "Status line not configured in settings.json"
+            fi
+        fi
     else
         log_warning "settings.json not found, creating minimal config"
         cat > "$TARGET_DIR/.claude/settings.json" << 'EOF'
 {
   "enableAllProjectMcpServers": true,
+  "statusLine": {
+    "type": "command",
+    "command": "${CLAUDE_PROJECT_DIR}/.claude/statusline/warpio-status.sh"
+  },
   "env": {
     "WARPIO_VERSION": "4.0.0",
     "WARPIO_ENABLED": "true"
@@ -371,6 +394,14 @@ validate_installation() {
     [ -f "$TARGET_DIR/CLAUDE.md" ] && log_success "CLAUDE.md present" || { log_error "CLAUDE.md missing"; ((errors++)); }
     [ -d "$TARGET_DIR/.claude" ] && log_success ".claude directory present" || { log_error ".claude directory missing"; ((errors++)); }
     [ -f "$TARGET_DIR/.env" ] && log_success ".env template present" || { log_error ".env missing"; ((errors++)); }
+
+    # Check component directories
+    [ -d "$TARGET_DIR/.claude/agents" ] && log_success "Expert agents directory present" || { log_warning "Agents directory missing"; }
+    [ -d "$TARGET_DIR/.claude/commands" ] && log_success "Commands directory present" || { log_warning "Commands directory missing"; }
+    [ -d "$TARGET_DIR/.claude/hooks" ] && log_success "Hooks directory present" || { log_warning "Hooks directory missing"; }
+    [ -d "$TARGET_DIR/.claude/output-styles" ] && log_success "Output styles directory present" || { log_warning "Output styles directory missing"; }
+    [ -d "$TARGET_DIR/.claude/statusline" ] && log_success "Statusline directory present" || { log_warning "Statusline directory missing"; }
+    [ -d "$TARGET_DIR/.claude/themes" ] && log_success "Themes directory present" || { log_warning "Themes directory missing"; }
     
     # Check MCP configuration validity
     if [ -f "$TARGET_DIR/.mcp.json" ]; then
@@ -398,24 +429,59 @@ validate_installation() {
                     log_warning "filesystem MCP not found"
                 fi
 
-                # Check for new critical scientific MCPs
-                if jq -e '.mcpServers.hdf5' "$TARGET_DIR/.mcp.json" &>/dev/null; then
-                    log_success "HDF5 MCP configured"
-                else
-                    log_warning "HDF5 MCP not found (scientific data I/O)"
-                fi
+    # Check for new critical scientific MCPs
+    if jq -e '.mcpServers.hdf5' "$TARGET_DIR/.mcp.json" &>/dev/null; then
+        log_success "HDF5 MCP configured"
+    else
+        log_warning "HDF5 MCP not found (scientific data I/O)"
+    fi
 
-                if jq -e '.mcpServers.slurm' "$TARGET_DIR/.mcp.json" &>/dev/null; then
-                    log_success "SLURM MCP configured"
-                else
-                    log_warning "SLURM MCP not found (HPC job management)"
-                fi
+    if jq -e '.mcpServers.slurm' "$TARGET_DIR/.mcp.json" &>/dev/null; then
+        log_success "SLURM MCP configured"
+    else
+        log_warning "SLURM MCP not found (HPC job management)"
+    fi
 
-                if jq -e '.mcpServers.jarvis' "$TARGET_DIR/.mcp.json" &>/dev/null; then
-                    log_success "Jarvis MCP configured"
-                else
-                    log_warning "Jarvis MCP not found (pipeline management)"
-                fi
+    if jq -e '.mcpServers.jarvis' "$TARGET_DIR/.mcp.json" &>/dev/null; then
+        log_success "Jarvis MCP configured"
+    else
+        log_warning "Jarvis MCP not found (pipeline management)"
+    fi
+
+    # Check theme installation
+    if [ -f "$TARGET_DIR/.claude/themes/warpio-theme.json" ]; then
+        log_success "Warpio theme installed"
+        if command -v jq &>/dev/null; then
+            local theme_name=$(jq -r '.name // "unknown"' "$TARGET_DIR/.claude/themes/warpio-theme.json" 2>/dev/null)
+            log_success "Theme: $theme_name"
+        fi
+    else
+        log_warning "Warpio theme not found"
+    fi
+
+    # Check status line functionality
+    if [ -f "$TARGET_DIR/.claude/statusline/warpio-status.sh" ]; then
+        if [ -x "$TARGET_DIR/.claude/statusline/warpio-status.sh" ]; then
+            log_success "Main status line script executable"
+        else
+            log_warning "Main status line script not executable"
+        fi
+    else
+        log_warning "Main status line script not found"
+    fi
+
+    # Check hook scripts
+    local hook_count=0
+    for hook_script in "$TARGET_DIR/.claude/hooks"/*/*; do
+        if [ -f "$hook_script" ] && [ -x "$hook_script" ]; then
+            ((hook_count++))
+        fi
+    done
+    if [ $hook_count -gt 0 ]; then
+        log_success "$hook_count hook scripts installed and executable"
+    else
+        log_warning "No executable hook scripts found"
+    fi
             else
                 log_error "Invalid MCP configuration"
                 ((errors++))
@@ -430,14 +496,19 @@ echo "Warpio Installation Validation"
 echo "=============================="
 echo
 
-# Check files
-echo "File Structure:"
-[ -f ".mcp.json" ] && echo "✓ .mcp.json (MCP config)" || echo "✗ .mcp.json missing"
-[ -f "CLAUDE.md" ] && echo "✓ CLAUDE.md (personality)" || echo "✗ CLAUDE.md missing"
-[ -d ".claude/agents" ] && echo "✓ Expert agents" || echo "✗ Agents missing"
-[ -d ".claude/commands" ] && echo "✓ Commands" || echo "✗ Commands missing"
-[ -d ".claude/hooks" ] && echo "✓ Hooks" || echo "✗ Hooks missing"
-echo
+    # Check files
+    echo "File Structure:"
+    [ -f ".mcp.json" ] && echo "✓ .mcp.json (MCP config)" || echo "✗ .mcp.json missing"
+    [ -f "CLAUDE.md" ] && echo "✓ CLAUDE.md (personality)" || echo "✗ CLAUDE.md missing"
+    [ -f ".env" ] && echo "✓ .env configuration" || echo "✗ .env missing"
+    [ -d ".claude" ] && echo "✓ .claude directory" || echo "✗ .claude directory missing"
+    [ -d ".claude/agents" ] && echo "✓ Expert agents" || echo "✗ Agents missing"
+    [ -d ".claude/commands" ] && echo "✓ Commands" || echo "✗ Commands missing"
+    [ -d ".claude/hooks" ] && echo "✓ Hooks" || echo "✗ Hooks missing"
+    [ -d ".claude/output-styles" ] && echo "✓ Output styles" || echo "✗ Output styles missing"
+    [ -d ".claude/statusline" ] && echo "✓ Statusline" || echo "✗ Statusline missing"
+    [ -d ".claude/themes" ] && echo "✓ Themes" || echo "✗ Themes missing"
+    echo
 
 # Check MCPs if jq available
 if command -v jq &>/dev/null && [ -f ".mcp.json" ]; then
@@ -449,6 +520,11 @@ if command -v jq &>/dev/null && [ -f ".mcp.json" ]; then
     echo "Critical MCP Status:"
     jq -e '.mcpServers.context7' .mcp.json &>/dev/null && echo "✓ context7 configured" || echo "✗ context7 missing"
     jq -e '.mcpServers.zen_mcp' .mcp.json &>/dev/null && echo "✓ zen_mcp configured" || echo "✗ zen_mcp missing"
+    echo
+
+    # Check theme
+    echo "Theme Status:"
+    [ -f ".claude/themes/warpio-theme.json" ] && echo "✓ Warpio theme installed" || echo "✗ Warpio theme missing"
     echo
 fi
 
@@ -516,6 +592,11 @@ main() {
         log_success "MCP validation script installed"
     fi
 
+    # Make all scripts executable
+    log_info "Setting executable permissions..."
+    find "$TARGET_DIR/.claude" -type f \( -name "*.sh" -o -name "*.py" \) -exec chmod +x {} \;
+    log_success "All scripts made executable"
+
     # Validate installation
     if validate_installation; then
         echo
@@ -536,6 +617,10 @@ main() {
         echo
         echo "For local AI integration, configure your .env file:"
         echo -e "  ${CYAN}nano .env${NC}"
+        echo
+        echo "Theme integration:"
+        echo -e "  The Warpio theme is installed in ${CYAN}.claude/themes/${NC}"
+        echo -e "  Status line uses the theme colors automatically"
         echo
     else
         echo

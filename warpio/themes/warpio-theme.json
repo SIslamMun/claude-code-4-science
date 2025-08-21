@@ -1,0 +1,88 @@
+{
+  "name": "Warpio Spectrum",
+  "description": "Blue to green to orange color spectrum theme for Warpio scientific computing",
+  "colors": {
+    "primary": {
+      "blue": "#00B4FF",
+      "cyan": "#00D4FF",
+      "bright_blue": "#00FFFF"
+    },
+    "secondary": {
+      "green": "#00FF88",
+      "bright_green": "#00FF44",
+      "teal": "#00FFAA"
+    },
+    "accent": {
+      "yellow": "#FFFF00",
+      "orange": "#FF8800",
+      "bright_orange": "#FF6600"
+    },
+    "status": {
+      "success": "#00FF44",
+      "warning": "#FFFF00",
+      "error": "#FF4444",
+      "info": "#00B4FF"
+    },
+    "background": {
+      "primary": "#1A1A2E",
+      "secondary": "#16213E",
+      "tertiary": "#0F3460"
+    },
+    "text": {
+      "primary": "#FFFFFF",
+      "secondary": "#E0E0E0",
+      "muted": "#A0A0A0"
+    }
+  },
+  "terminal": {
+    "ansi_colors": {
+      "black": "#000000",
+      "red": "#FF4444",
+      "green": "#00FF44",
+      "yellow": "#FFFF00",
+      "blue": "#00B4FF",
+      "magenta": "#FF00FF",
+      "cyan": "#00FFFF",
+      "white": "#FFFFFF",
+      "bright_black": "#404040",
+      "bright_red": "#FF8888",
+      "bright_green": "#88FF88",
+      "bright_yellow": "#FFFF88",
+      "bright_blue": "#88DDFF",
+      "bright_magenta": "#FF88FF",
+      "bright_cyan": "#88FFFF",
+      "bright_white": "#FFFFFF"
+    }
+  },
+  "syntax": {
+    "keywords": "#00B4FF",
+    "strings": "#00FF88",
+    "comments": "#A0A0A0",
+    "functions": "#FFFF00",
+    "variables": "#FF8800",
+    "numbers": "#00FFFF",
+    "operators": "#FFFFFF"
+  },
+  "ui": {
+    "status_line": {
+      "background": "#16213E",
+      "text": "#FFFFFF",
+      "icons": {
+        "persona": "#00B4FF",
+        "directory": "#00FF88",
+        "git": "#FFFF00",
+        "model": "#00FF44",
+        "tokens": "#FF8800",
+        "mcp": "#00FFFF"
+      }
+    },
+    "prompt": {
+      "text": "#00B4FF",
+      "background": "#1A1A2E"
+    },
+    "selection": {
+      "background": "#0F3460",
+      "text": "#FFFFFF"
+    }
+  }
+}

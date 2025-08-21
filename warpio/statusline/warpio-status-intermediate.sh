@@ -1,7 +1,6 @@
 #!/bin/bash
-# Warpio Status Line - Default (Intermediate Version)
-# Enhanced with more Warpio-specific information and proper theming
-# This script uses the intermediate version as the default for balanced information display
+# Warpio Status Line - Intermediate Version
+# Enhanced with more Warpio-specific information
 
 input=$(cat)
 
@@ -12,13 +11,13 @@ PROJECT_DIR=$(echo "$input" | jq -r '.workspace.project_dir // "."')
 TOKEN_COUNT=$(echo "$input" | jq -r '.usage.total_tokens // 0')
 SESSION_ID=$(echo "$input" | jq -r '.session_id // ""')
 
-# Colors from Warpio theme (blue to green to orange spectrum)
-BLUE='\033[38;5;39m'      # Bright blue
-CYAN='\033[38;5;51m'      # Cyan
-GREEN='\033[38;5;46m'     # Bright green
-YELLOW='\033[38;5;226m'   # Yellow
-ORANGE='\033[38;5;208m'   # Orange
-RED='\033[38;5;196m'      # Bright red
+# Colors from Warpio theme (matching warpio-theme.json)
+BLUE='\033[38;2;0;180;255m'    # #00B4FF - persona color
+CYAN='\033[38;2;0;208;255m'    # #00D0FF - secondary blue
+GREEN='\033[38;2;0;255;136m'   # #00FF88 - directory color
+YELLOW='\033[38;2;255;255;0m'  # #FFFF00 - git color
+ORANGE='\033[38;2;255;136;0m'  # #FF8800 - tokens color
+RED='\033[38;2;255;68;68m'     # #FF4444 - error color
 RESET='\033[0m'
 
 # Get directory name
@@ -94,5 +93,5 @@ else
     TOKEN_COLOR=$BLUE
 fi
 
-# Build enhanced status line with proper theming
+# Build enhanced status line
 echo -e "${BLUE}${PERSONA_ICON} Warpio${RESET}${MCP_INFO}${WORKFLOW_INFO} | ${CYAN}📁${DIR_NAME}${GIT_INFO}${LOCAL_AI}${RESET} | ${GREEN}[$MODEL_DISPLAY]${RESET} | ${TOKEN_COLOR}🎯${TOKEN_DISPLAY}${RESET} | ${ORANGE}iowarp.ai${RESET}"

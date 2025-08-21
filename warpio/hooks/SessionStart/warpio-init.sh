@@ -72,16 +72,12 @@ fi
 echo ""
 echo "🔍 Checking MCP availability..."
 
-# Check if iowarp-mcps package is installed
-if ! uv pip list 2>/dev/null | grep -q iowarp-mcps; then
-    echo "⚠️  iowarp-mcps package not installed"
-    echo "   Install with: uv pip install iowarp-mcps"
-    echo "   Some scientific computing features may be limited"
-else
-    echo "✅ iowarp-mcps package found"
+# Check if iowarp-mcps package is available via uvx
+if command -v uvx &> /dev/null && uvx iowarp-mcps --help &>/dev/null; then
+    echo "✅ iowarp-mcps package available via uvx"
 
-    # Check critical MCPs
-    critical_mcps=("hdf5" "slurm" "zen_mcp")
+    # Check critical MCPs using uvx
+    critical_mcps=("hdf5" "slurm")
     missing_mcps=()
 
     for mcp in "${critical_mcps[@]}"; do
@@ -98,8 +94,13 @@ else
         echo "✅ All critical MCPs available"
     else
         echo "⚠️  Some MCPs not working: ${missing_mcps[*]}"
-        echo "   Check iowarp-mcps installation"
+        echo "   This is expected if the MCP server implementations are not available"
+        echo "   The MCPs are configured but may require additional setup"
     fi
+else
+    echo "⚠️  iowarp-mcps package not available via uvx"
+    echo "   Install with: uv pip install iowarp-mcps"
+    echo "   Some scientific computing features may be limited"
 fi
 
 # Create temporary workflow directory if it doesn't exist

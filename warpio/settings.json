@@ -5,20 +5,20 @@
       "matcher": "startup|resume|clear",
       "hooks": [{
         "type": "command",
-        "command": "${CLAUDE_PROJECT_DIR}/warpio/hooks/SessionStart/warpio-init.sh"
+        "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/SessionStart/warpio-init.sh"
       }]
     }],
     "SubagentStop": [{
       "hooks": [{
         "type": "command",
-        "command": "${CLAUDE_PROJECT_DIR}/warpio/hooks/SubagentStop/expert-result-logger.py",
+        "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/SubagentStop/expert-result-logger.py",
         "timeout": 5
       }]
     }],
     "Stop": [{
       "hooks": [{
         "type": "command",
-        "command": "${CLAUDE_PROJECT_DIR}/warpio/hooks/Stop/session-summary-logger.py",
+        "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/Stop/session-summary-logger.py",
         "timeout": 10
       }]
     }],
@@ -26,7 +26,7 @@
       "matcher": "manual|auto",
       "hooks": [{
         "type": "command",
-        "command": "${CLAUDE_PROJECT_DIR}/warpio/hooks/PreCompact/workflow-checkpoint.py",
+        "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/PreCompact/workflow-checkpoint.py",
         "timeout": 5
       }]
     }]
