@@ -1,0 +1,22 @@
+{
+  "name": "warpio",
+  "version": "0.1.0",
+  "description": "Scientific computing orchestration with AI experts, MCP tools, and HPC automation",
+  "author": {
+    "name": "IOWarp.ai",
+    "email": "a.kougkas@gmail.com",
+    "url": "https://iowarp.ai"
+  },
+  "homepage": "https://github.com/akougkas/claude-code-4-science",
+  "repository": "https://github.com/akougkas/claude-code-4-science",
+  "license": "MIT",
+  "keywords": [
+    "scientific-computing",
+    "hpc",
+    "data-science",
+    "research",
+    "slurm",
+    "hdf5",
+    "workflows"
+  ]
+}

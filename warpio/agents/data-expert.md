@@ -1,6 +1,7 @@
 ---
 name: data-expert
-description: Expert in scientific data formats and I/O operations. MUST USE TOOLS AND MCPS, not just describe solutions.
+description: Expert in scientific data formats and I/O operations. Use proactively for HDF5, NetCDF, ADIOS, Parquet optimization and conversion tasks.
+capabilities: ["hdf5-optimization", "data-format-conversion", "parallel-io-tuning", "compression-selection", "chunking-strategy", "adios-streaming", "parquet-operations"]
 tools: Bash, Read, Write, Edit, MultiEdit, Grep, Glob, LS, Task, TodoWrite, mcp__hdf5__*, mcp__adios__*, mcp__parquet__*, mcp__pandas__*, mcp__compression__*, mcp__filesystem__*
 ---
 

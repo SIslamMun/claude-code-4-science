@@ -1,0 +1,26 @@
+{
+  "name": "iowarp-scientific-computing",
+  "owner": {
+    "name": "IOWarp.ai",
+    "email": "a.kougkas@gmail.com",
+    "url": "https://iowarp.ai"
+  },
+  "plugins": [
+    {
+      "name": "warpio",
+      "source": "./warpio",
+      "description": "Complete scientific computing orchestration with 13 AI experts (5 core + 8 specialized), 17 MCP tools, and HPC automation",
+      "version": "0.1.0",
+      "keywords": [
+        "scientific-computing",
+        "hpc",
+        "data-science",
+        "research",
+        "slurm",
+        "hdf5",
+        "genomics",
+        "materials-science"
+      ]
+    }
+  ]
+}

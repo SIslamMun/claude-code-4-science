@@ -1,0 +1,47 @@
+{
+  "SessionStart": [
+    {
+      "matcher": "startup|resume|clear",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/SessionStart/warpio-init.sh"
+        }
+      ]
+    }
+  ],
+  "SubagentStop": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/SubagentStop/expert-result-logger.py",
+          "timeout": 5
+        }
+      ]
+    }
+  ],
+  "Stop": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/Stop/session-summary-logger.py",
+          "timeout": 10
+        }
+      ]
+    }
+  ],
+  "PreCompact": [
+    {
+      "matcher": "manual|auto",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/PreCompact/workflow-checkpoint.py",
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}
