@@ -21,8 +21,8 @@ if [ ! -f ".claude/CLAUDE.md" ] || ! grep -q "WARPIO" ".claude/CLAUDE.md" 2>/dev
     fi
 
     # 2. Copy environment template
-    if [ -n "$PLUGIN_ROOT" ] && [ -f "${PLUGIN_ROOT}/_archive/.env.example" ]; then
-        cp "${PLUGIN_ROOT}/_archive/.env.example" .env.warpio.example
+    if [ -n "$PLUGIN_ROOT" ] && [ -f "${PLUGIN_ROOT}/.env.example" ]; then
+        cp "${PLUGIN_ROOT}/.env.example" .env.warpio.example
         echo "✅ Environment template → .env.warpio.example"
     fi
 
