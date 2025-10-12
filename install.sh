@@ -35,7 +35,7 @@ TARGET_DIR="${1:-$DEFAULT_DIR}"
 
 print_banner() {
     echo -e "${CYAN}╔══════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}║                    WARPIO INSTALLER v4.0                    ║${NC}"
+    echo -e "${CYAN}║                    WARPIO INSTALLER v1.0                    ║${NC}"
     echo -e "${CYAN}║         Scientific Computing Enhancement for Claude Code     ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo
@@ -372,7 +372,7 @@ EOF
     "command": "${CLAUDE_PROJECT_DIR}/.claude/statusline/warpio-status.sh"
   },
   "env": {
-    "WARPIO_VERSION": "4.0.0",
+    "WARPIO_VERSION": "1.0.0",
     "WARPIO_ENABLED": "true"
   }
 }

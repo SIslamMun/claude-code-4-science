@@ -8,7 +8,7 @@ allowed-tools: Read, Bash
 ## Current Status
 
 ### System Status
-- **Warpio Version:** 4.0.0
+- **Warpio Version:** 1.0.0
 - **Active Experts:** 5/5 operational
 - **Local AI Status:** Connected (LM Studio)
 - **MCP Servers:** 16/16 available

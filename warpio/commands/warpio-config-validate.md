@@ -8,7 +8,7 @@ allowed-tools: Bash, Read
 ## System Validation
 
 ### Core Components
-- ✅ **Warpio Version:** 4.0.0
+- ✅ **Warpio Version:** 1.0.0
 - ✅ **Installation Path:** /home/akougkas/claude-code-4-science/test
 - ✅ **Python Environment:** Available
 - ✅ **UV Package Manager:** Installed

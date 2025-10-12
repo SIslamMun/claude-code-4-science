@@ -234,7 +234,7 @@ Steps to reproduce the behavior:
 A clear description of what you expected to happen.
 
 **Environment**
-- Warpio Version: [e.g., 4.0.0]
+- Warpio Version: [e.g., 1.0.0]
 - OS: [e.g., Ubuntu 22.04]
 - Claude CLI Version: [e.g., 0.1.0]
 - Python Version: [e.g., 3.9.7]
