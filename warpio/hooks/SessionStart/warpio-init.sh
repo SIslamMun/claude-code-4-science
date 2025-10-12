@@ -1,117 +1,86 @@
 #!/bin/bash
 
-# Warpio Initialization Hook
-# Runs at the start of each Claude Code session
+# Warpio SessionStart Hook - Auto-Installation
+# Automatically configures Warpio on first run
 
-# Load environment configuration from project root
-if [ -f ".env" ]; then
-    export $(grep -v '^#' .env | xargs) 2>/dev/null
-fi
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT}"
 
-# Set Warpio environment variables (can be overridden by .env)
-export WARPIO_MODE="${WARPIO_MODE:-orchestration}"
-export WARPIO_PROVIDER="${WARPIO_PROVIDER:-claude}"
-export WARPIO_VERSION="${WARPIO_VERSION:-1.0.0}"
-export WARPIO_HOME="${WARPIO_HOME:-$(pwd)}"
-export WARPIO_BRAND="${WARPIO_BRAND:-Warpio}"
-export WARPIO_DOMAIN="${WARPIO_DOMAIN:-iowarp.ai}"
+# First-run detection and auto-install
+if [ ! -f ".claude/CLAUDE.md" ] || ! grep -q "WARPIO" ".claude/CLAUDE.md" 2>/dev/null; then
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "🚀 WARPIO - Scientific Computing for Claude Code"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo
+    echo "First-time setup detected. Auto-configuring Warpio..."
+    echo
 
-# ASCII Art Banner
-cat << 'EOF'
-╔══════════════════════════════════════════════════════════════╗
-║                                                              ║
-║  ██╗    ██╗ █████╗ ██████╗ ██████╗ ██╗ ██████╗             ║
-║  ██║    ██║██╔══██╗██╔══██╗██╔══██╗██║██╔═══██╗            ║
-║  ██║ █╗ ██║███████║██████╔╝██████╔╝██║██║   ██║            ║
-║  ██║███╗██║██╔══██║██╔══██╗██╔═══╝ ██║██║   ██║            ║
-║  ╚███╔███╔╝██║  ██║██║  ██║██║     ██║╚██████╔╝            ║
-║   ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝ ╚═════╝             ║
-║                                                              ║
-║        Scientific Computing Orchestrator v1.0.0             ║
-║              Powered by iowarp.ai                           ║
-║                                                              ║
-╚══════════════════════════════════════════════════════════════╝
-EOF
+    # Create .claude directory
+    mkdir -p .claude
 
-echo ""
-echo "🚀 $WARPIO_BRAND Orchestration Layer Initialized"
-echo "📊 Expert Personas Available: data, hpc, analysis, research, workflow"
-
-# Show configured AI provider
-if [ "$LOCAL_AI_PROVIDER" = "lmstudio" ]; then
-    echo "🤖 Local AI: LM Studio ($LMSTUDIO_API_URL)"
-    echo "   Model: $LMSTUDIO_MODEL"
-elif [ "$LOCAL_AI_PROVIDER" = "ollama" ]; then
-    echo "🤖 Local AI: Ollama ($OLLAMA_API_URL)"
-    echo "   Model: $OLLAMA_MODEL"
-else
-    echo "🤖 Local AI: Not configured (using cloud fallback if available)"
-fi
-
-echo "🔬 Scientific MCPs: Configured"
-echo ""
-
-# Check for local AI availability
-if command -v ollama &> /dev/null; then
-    echo "✓ Ollama detected at $(which ollama)"
-fi
-
-if lsof -i:1234 &> /dev/null; then
-    echo "✓ LM Studio API detected on port 1234"
-fi
-
-# Check for UV installation
-if command -v uv &> /dev/null; then
-    echo "✓ UV package manager detected at $(which uv)"
-else
-    echo "⚠️  UV not found. Installing UV is recommended for Python package management."
-    echo "   Install with: curl -LsSf https://astral.sh/uv/install.sh | sh"
-fi
-
-# MCP Health Check
-echo ""
-echo "🔍 Checking MCP availability..."
-
-# Check if iowarp-mcps package is available via uvx
-if command -v uvx &> /dev/null && uvx iowarp-mcps --help &>/dev/null; then
-    echo "✅ iowarp-mcps package available via uvx"
-
-    # Check critical MCPs using uvx
-    critical_mcps=("hdf5" "slurm")
-    missing_mcps=()
-
-    for mcp in "${critical_mcps[@]}"; do
-        echo -n "   $mcp... "
-        if uvx iowarp-mcps "$mcp" --help &>/dev/null; then
-            echo "✅"
-        else
-            echo "❌"
-            missing_mcps+=("$mcp")
-        fi
-    done
-
-    if [ ${#missing_mcps[@]} -eq 0 ]; then
-        echo "✅ All critical MCPs available"
+    # Copy Warpio personality
+    if [ -n "$PLUGIN_ROOT" ] && [ -f "${PLUGIN_ROOT}/WARPIO.md" ]; then
+        cp "${PLUGIN_ROOT}/WARPIO.md" .claude/CLAUDE.md
+        echo "✅ Warpio personality installed"
     else
-        echo "⚠️  Some MCPs not working: ${missing_mcps[*]}"
-        echo "   This is expected if the MCP server implementations are not available"
-        echo "   The MCPs are configured but may require additional setup"
+        echo "⚠️  Could not locate WARPIO.md - using fallback"
+        # Fallback: try to find it
+        WARPIO_FILE=$(find ~/.config/claude-code -name "WARPIO.md" 2>/dev/null | head -1)
+        if [ -n "$WARPIO_FILE" ]; then
+            cp "$WARPIO_FILE" .claude/CLAUDE.md
+            echo "✅ Warpio personality installed (fallback)"
+        fi
     fi
-else
-    echo "⚠️  iowarp-mcps package not available via uvx"
-    echo "   Install with: uv pip install iowarp-mcps"
-    echo "   Some scientific computing features may be limited"
+
+    # Configure statusLine if jq available
+    if command -v jq &>/dev/null && [ -n "$PLUGIN_ROOT" ]; then
+        cat > .claude/settings.local.json << EOF
+{
+  "statusLine": {
+    "type": "command",
+    "command": "${PLUGIN_ROOT}/scripts/warpio-status.sh"
+  },
+  "permissions": {
+    "allow": ["Task", "Bash(sbatch:*)", "Bash(srun:*)", "Bash(uvx:*)", "mcp__*"],
+    "defaultMode": "acceptEdits"
+  },
+  "env": {
+    "WARPIO_VERSION": "0.1.0",
+    "WARPIO_ENABLED": "true"
+  }
+}
+EOF
+        echo "✅ StatusLine and permissions configured"
+    fi
+
+    echo
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "✨ Setup complete! Please restart Claude Code:"
+    echo "   1. Exit: /exit"
+    echo "   2. Restart: claude"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo
+    exit 0
 fi
 
-# Create temporary workflow directory if it doesn't exist
-mkdir -p /tmp/warpio-workflows
+# Normal startup - Warpio already configured
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🚀 WARPIO Scientific Computing Platform"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✅ 13 Expert Agents | 19 Commands | 17 MCP Tools"
+echo "🔬 Powered by IOWarp.ai"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo
 
-# Handle CLAUDE.md integration
-if [ -f "CLAUDE.md" ]; then
-    echo "📝 User CLAUDE.md detected - integrating with Warpio configuration"
-    # Create a symlink or append to WARPIO.md in the future if needed
+# MCP health check
+if command -v uvx &>/dev/null; then
+    echo "📡 MCP Status:"
+    for mcp in hdf5 slurm plot; do
+        if timeout 1 uvx iowarp-mcps "$mcp" --help &>/dev/null 2>&1; then
+            echo "   ✅ $mcp"
+        fi
+    done | head -3
 fi
 
-echo ""
-echo "Ready for scientific computing tasks! Use /mcp to check MCP status."
-echo "────────────────────────────────────────────────────────────────"
+echo
+echo "📖 Quick start: /warpio-help | /warpio-expert-list | /warpio-status"
+echo
